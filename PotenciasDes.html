@@ -1,0 +1,377 @@
+<!--
+Palette: Cyber Vibrant (Dark Slate #0f172a, Cyan #06b6d4, Blue #3b82f6, Purple #8b5cf6, Emerald #10b981)
+Plan: 1. Hero/Intro (Context) -> 2. Architecture Layout (CSS Diagram) -> 3. Power Budget (Donut & Bar Charts) -> 4. PCB Design Rules (Bar Chart) -> 5. Firmware Flow (CSS Timeline).
+Choices:
+- Power Budget: Composition -> Donut Chart (Chart.js) - NO SVG.
+- LDO Capacity Margin: Compare -> Horizontal Bar (Chart.js) - NO SVG.
+- Track Widths: Compare -> Horizontal Bar Chart (Chart.js) - NO SVG.
+- Architecture & Flow: Organize -> Tailwind CSS Grid elements - NO SVG.
+Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía: Dispositivo IoT Calidad de Aire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 280px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 320px;
+            }
+        }
+        .timeline-step {
+            position: relative;
+        }
+        .timeline-step:not(:last-child)::after {
+            content: '➔';
+            position: absolute;
+            right: -24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #06b6d4;
+            font-size: 1.5rem;
+        }
+        @media (max-width: 767px) {
+            .timeline-step:not(:last-child)::after {
+                content: '⬇';
+                right: auto;
+                left: 50%;
+                top: auto;
+                bottom: -24px;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-cyan-500 selection:text-white">
+
+    <header class="bg-slate-800 border-b border-slate-700 py-16 px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="inline-block px-4 py-1 rounded-full bg-cyan-900 text-cyan-300 font-semibold text-sm mb-6 uppercase tracking-widest border border-cyan-700">
+                Diseño Electrónico Avanzado
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 mb-6 leading-tight">
+                Dispositivo IoT Portable para Calidad de Aire
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                Análisis de la arquitectura de hardware, presupuesto de potencia y firmware para un sistema embebido de bajo consumo basado en un único SoC (ESP32-C3) diseñado para monitorear confort térmico y COVs en interiores.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-12 space-y-20">
+
+        <section>
+            <div class="mb-10 text-center">
+                <h2 class="text-3xl font-bold text-white mb-4">Arquitectura de Hardware Simplificada</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    La migración a un entorno de un solo chip (SoC) reduce costos, simplifica el diseño de la PCB y elimina corrientes de reposo parasitarias. El sistema se divide en tres módulos funcionales principales comunicados eficientemente.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-lg hover:border-cyan-500 transition-colors">
+                    <div class="text-4xl mb-4 text-cyan-400">⚡</div>
+                    <h3 class="text-xl font-bold text-white mb-3">1. Módulo de Potencia</h3>
+                    <ul class="space-y-2 text-sm text-slate-300">
+                        <li><strong class="text-cyan-300">Entrada:</strong> USB-C (5V) & Li-Po (3.7V)</li>
+                        <li><strong class="text-cyan-300">Protección:</strong> Fusible PPTC + Diodo TVS</li>
+                        <li><strong class="text-cyan-300">Gestión:</strong> Cargador TP4056 + PowerPath</li>
+                        <li><strong class="text-cyan-300">Regulación:</strong> LDO AMS1117 (Riel 3.3V)</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-lg hover:border-blue-500 transition-colors relative">
+                    <div class="text-4xl mb-4 text-blue-400">🧠</div>
+                    <h3 class="text-xl font-bold text-white mb-3">2. Control y Procesamiento</h3>
+                    <ul class="space-y-2 text-sm text-slate-300">
+                        <li><strong class="text-blue-300">Núcleo:</strong> SoC ESP32-C3</li>
+                        <li><strong class="text-blue-300">Arquitectura:</strong> RISC-V 32 bits</li>
+                        <li><strong class="text-blue-300">Conectividad:</strong> Wi-Fi 2.4 GHz Nativo</li>
+                        <li><strong class="text-blue-300">Filtro:</strong> Perla de Ferrita en riel 3V3_MCU</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 shadow-lg hover:border-purple-500 transition-colors relative">
+                    <div class="text-4xl mb-4 text-purple-400">📡</div>
+                    <h3 class="text-xl font-bold text-white mb-3">3. Adquisición I2C</h3>
+                    <ul class="space-y-2 text-sm text-slate-300">
+                        <li><strong class="text-purple-300">Bus:</strong> Compartido (SDA/SCL)</li>
+                        <li><strong class="text-purple-300">TMP102:</strong> Temp Digital (Dir: 0x48)</li>
+                        <li><strong class="text-purple-300">SGP30:</strong> Gas MOX / eCO2 (Dir: 0x58)</li>
+                        <li><strong class="text-purple-300">Pull-ups:</strong> Resistencias de 4.7kΩ</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-slate-800/50 rounded-2xl p-8 md:p-12 border border-slate-700">
+            <div class="mb-10 md:text-center">
+                <h2 class="text-3xl font-bold text-white mb-4">Presupuesto de Corriente y Eficiencia</h2>
+                <p class="text-slate-400 max-w-3xl mx-auto">
+                    El análisis eléctrico en el "peor escenario" (transmisión Wi-Fi simultánea con el calentador del sensor de gas activo) demuestra la viabilidad térmica y operativa del regulador LDO AMS1117-3.3.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                
+                <div>
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-6 text-center">Consumo en Riel de 3.3V (Pico Máximo)</h3>
+                    <div class="chart-container">
+                        <canvas id="powerDonutChart"></canvas>
+                    </div>
+                    <p class="text-sm text-slate-400 text-center mt-6">
+                        El ESP32-C3 representa la inmensa mayoría del consumo transitorio durante ráfagas de radiofrecuencia (350 mA), seguido por el micro-calefactor del SGP30 (48.2 mA).
+                    </p>
+                </div>
+
+                <div class="flex flex-col justify-center">
+                    <div class="bg-slate-900 rounded-xl p-6 border border-slate-700 mb-8">
+                        <div class="text-sm text-slate-400 uppercase tracking-wide font-semibold mb-1">Margen de Seguridad LDO</div>
+                        <div class="text-6xl font-black text-emerald-400">60%</div>
+                        <p class="text-slate-300 mt-2 text-sm">
+                            El AMS1117-3.3 soporta hasta 1000 mA. Con un pico de ~400 mA, el margen del 60% garantiza estabilidad térmica.
+                        </p>
+                    </div>
+                    
+                    <h3 class="text-lg font-semibold text-emerald-400 mb-4 text-center">Demanda vs Capacidad (mA)</h3>
+                    <div class="chart-container" style="height: 180px;">
+                        <canvas id="capacityBarChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section>
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-white mb-4">Criterios de Ruteo PCB (IPC-2152)</h2>
+                <p class="text-slate-400 max-w-3xl">
+                    Para asegurar que el incremento térmico en el cobre de 1 oz no supere los 10°C, el layout físico en Altium Designer implementa grosores de pista estrictamente calculados según la corriente de cada nodo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <div class="lg:col-span-2 bg-slate-800 rounded-xl p-6 border border-slate-700">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-6">Reglas de Ancho de Pista (mils)</h3>
+                    <div class="chart-container" style="max-width: 100%;">
+                        <canvas id="tracksBarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 flex flex-col justify-center">
+                    <div class="text-center mb-6">
+                        <div class="text-5xl mb-3">📏</div>
+                        <h3 class="text-xl font-bold text-white">Factor de Forma</h3>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                            <div class="text-xs text-slate-400 mb-1">Dimensiones Máximas</div>
+                            <div class="text-lg font-mono text-cyan-300">2410 × 1400 mils</div>
+                        </div>
+                        <div class="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                            <div class="text-xs text-slate-400 mb-1">Equivalencia Métrica</div>
+                            <div class="text-lg font-mono text-purple-300">61.2 × 35.6 mm</div>
+                        </div>
+                        <div class="bg-slate-950/50 p-4 rounded-lg border border-slate-800">
+                            <div class="text-xs text-slate-400 mb-1">Capacidad Fabricación (JLCPCB)</div>
+                            <div class="text-sm font-mono text-slate-300">Min 5 mils / Vías 0.3mm</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="pb-20">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl font-bold text-white mb-4">Ciclo de Vida del Firmware (ESP-IDF)</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    El código C++ gestiona el SoC de forma asíncrona, maximizando la autonomía energética al apagar los periféricos de RF y el bus de datos inmediatamente después de cada transmisión.
+                </p>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center bg-slate-800 p-8 rounded-2xl border border-slate-700 gap-6 md:gap-0">
+                
+                <div class="timeline-step w-full md:w-1/5 text-center px-2">
+                    <div class="w-16 h-16 mx-auto bg-slate-900 border-2 border-slate-600 rounded-full flex items-center justify-center text-2xl mb-4">💤</div>
+                    <div class="font-bold text-white text-sm mb-1">Despertar</div>
+                    <div class="text-xs text-slate-400">SoC sale de Deep Sleep</div>
+                </div>
+
+                <div class="timeline-step w-full md:w-1/5 text-center px-2">
+                    <div class="w-16 h-16 mx-auto bg-cyan-900/50 border-2 border-cyan-500 rounded-full flex items-center justify-center text-2xl mb-4">⚙️</div>
+                    <div class="font-bold text-white text-sm mb-1">Init I2C</div>
+                    <div class="text-xs text-slate-400">Configura SDA/SCL 100kHz</div>
+                </div>
+
+                <div class="timeline-step w-full md:w-1/5 text-center px-2">
+                    <div class="w-16 h-16 mx-auto bg-blue-900/50 border-2 border-blue-500 rounded-full flex items-center justify-center text-2xl mb-4">🌡️</div>
+                    <div class="font-bold text-white text-sm mb-1">Lectura SGP30/TMP</div>
+                    <div class="text-xs text-slate-400">Adquisición eCO2 & Temp</div>
+                </div>
+
+                <div class="timeline-step w-full md:w-1/5 text-center px-2">
+                    <div class="w-16 h-16 mx-auto bg-purple-900/50 border-2 border-purple-500 rounded-full flex items-center justify-center text-2xl mb-4">📶</div>
+                    <div class="font-bold text-white text-sm mb-1">Tx Nube</div>
+                    <div class="text-xs text-slate-400">Conecta Wi-Fi y publica MQTT</div>
+                </div>
+
+                <div class="w-full md:w-1/5 text-center px-2">
+                    <div class="w-16 h-16 mx-auto bg-slate-900 border-2 border-emerald-500 rounded-full flex items-center justify-center text-2xl mb-4 text-emerald-400">⏱️</div>
+                    <div class="font-bold text-emerald-400 text-sm mb-1">Deep Sleep</div>
+                    <div class="text-xs text-slate-400">Apaga RF/I2C (10 segundos)</div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
+        
+        function wrapLabel(label) {
+            if (label.length <= 16) return label;
+            let words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            for (let i = 0; i < words.length; i++) {
+                if ((currentLine + words[i]).length > 16) {
+                    if (currentLine !== '') {
+                        lines.push(currentLine.trim());
+                    }
+                    currentLine = words[i] + ' ';
+                } else {
+                    currentLine += words[i] + ' ';
+                }
+            }
+            if (currentLine !== '') {
+                lines.push(currentLine.trim());
+            }
+            return lines;
+        }
+
+        const tooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        const ctxDonut = document.getElementById('powerDonutChart').getContext('2d');
+        new Chart(ctxDonut, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    wrapLabel('ESP32-C3 (Pico de Tx Wi-Fi)'),
+                    wrapLabel('SGP30 (Micro-calefactor)'),
+                    wrapLabel('TMP102 (Sensado Activo)')
+                ],
+                datasets: [{
+                    data: [350, 48.2, 0.01],
+                    backgroundColor: ['#06b6d4', '#8b5cf6', '#ec4899'],
+                    borderColor: '#0f172a',
+                    borderWidth: 4,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: tooltipConfig
+                }
+            }
+        });
+
+        const ctxCapBar = document.getElementById('capacityBarChart').getContext('2d');
+        new Chart(ctxCapBar, {
+            type: 'bar',
+            data: {
+                labels: [wrapLabel('Demanda Pico'), wrapLabel('LDO AMS1117')],
+                datasets: [{
+                    label: 'Corriente (mA)',
+                    data: [400, 1000],
+                    backgroundColor: ['#f43f5e', '#10b981'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { beginAtZero: true, max: 1200, grid: { color: '#334155' } },
+                    y: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: tooltipConfig
+                }
+            }
+        });
+
+        const ctxTracks = document.getElementById('tracksBarChart').getContext('2d');
+        new Chart(ctxTracks, {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabel('Batería y Carga (TP4056)'),
+                    wrapLabel('Alimentación MCU (Transitorios)'),
+                    wrapLabel('Señal y Datos (Bus I2C)')
+                ],
+                datasets: [{
+                    label: 'Ancho de Pista (mils)',
+                    data: [30, 15, 10],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { 
+                        beginAtZero: true, 
+                        max: 40,
+                        title: { display: true, text: 'Grosor en Mils', color: '#64748b' },
+                        grid: { color: '#334155' } 
+                    },
+                    y: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: tooltipConfig
+                }
+            }
+        });
+    </script>
+</body>
+</html>

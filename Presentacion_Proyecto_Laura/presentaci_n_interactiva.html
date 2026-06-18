@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Interactiva - Laura Sofía Castaño Pineda</title>
+    <!-- Tailwind CSS para el diseño ágil y responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-primary: #0a1128;
+            --bg-secondary: #1c2541;
+            --accent: #00b4d8;
+            --accent-hover: #90e0ef;
+            --text-main: #f8f9fa;
+            --text-muted: #abc4ff;
+        }
+
+        body {
+            background-color: #020c1b;
+            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Contenedor principal de la presentación fija en ratio 16:9 */
+        .slide-deck {
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--bg-primary);
+            border: 2px solid var(--bg-secondary);
+        }
+
+        .slide {
+            display: none;
+            height: 100%;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Estilo de los bloques interactivos SVG */
+        .interactive-node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .interactive-node:hover {
+            fill: #1c2541 !important;
+            filter: drop-shadow(0 0 8px var(--accent));
+        }
+
+        /* Contenedores de Imágenes de Altium */
+        .image-container {
+            width: 100%;
+            height: 380px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .zoomable-image {
+            cursor: zoom-in;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
+        }
+
+        .zoomable-image:hover {
+            transform: scale(1.04) !important;
+            filter: brightness(1.15) drop-shadow(0 0 15px var(--accent));
+        }
+
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(2, 12, 27, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid var(--bg-secondary);
+        }
+
+        .lightbox-modal.active img {
+            transform: scale(1);
+        }
+
+        /* Formateador exclusivo para impresión a PDF */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                overflow: visible !important;
+                height: auto !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .slide-deck {
+                border: none !important;
+                box-shadow: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                height: auto !important;
+                aspect-ratio: auto !important;
+                background: transparent !important;
+            }
+            .slide {
+                display: flex !important;
+                opacity: 1 !important;
+                page-break-after: always !important;
+                height: 100vh !important;
+                justify-content: center !important;
+                background-color: #0a1128 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                padding: 40px !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center p-4 overflow-hidden relative">
+
+    <!-- Área de Diapositivas -->
+    <div class="slide-deck rounded-2xl shadow-2xl overflow-hidden relative p-8 md:p-12 flex flex-col justify-between">
+        
+        <!-- DIAPOSITIVA 1: PORTADA -->
+        <div class="slide active justify-center items-center text-center relative">
+            <!-- Logo Universidad Nacional de Colombia -->
+            <div class="absolute top-0 left-0 w-36 md:w-44 opacity-95 no-print">
+                <img src="logoUnal.png" alt="Universidad Nacional de Colombia" class="w-full h-auto object-contain brightness-0 invert">
+            </div>
+
+            <span class="text-xs font-semibold tracking-widest text-cyan-400 uppercase bg-cyan-950/50 px-3.5 py-1.5 rounded-full border border-cyan-800/50 mb-6">Proyecto de Diseño Electrónico</span>
+            <h1 class="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight max-w-4xl px-4">
+                Dispositivo de Bajo Consumo Portable de Medición Inalámbrica de Temperatura y Calidad de Aire en Interiores
+            </h1>
+            <div class="w-24 h-1 bg-cyan-400 my-6 rounded-full"></div>
+            <h2 class="text-base md:text-lg text-slate-300 max-w-2xl font-light mb-8">
+                Diseño de Hardware Embebido, Potencia Inteligente e Integración del Sensor de Gas SGP30 por I2C
+            </h2>
+            <div class="grid grid-cols-2 gap-8 text-left border-t border-slate-800 pt-6 w-full max-w-xl">
+                <div>
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">Diseñador de Hardware</p>
+                    <p class="text-base font-semibold text-white">Laura Sofía Castaño Pineda</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">Institución Académica</p>
+                    <p class="text-base font-semibold text-white">Universidad Nacional de Colombia</p>
+                    <p class="text-xs text-cyan-400">lacastanop@unal.edu.co</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 2: DESCRIPCIÓN DEL PROYECTO -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">01.</span> Descripción
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Problema y Propósito</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto">
+                <div class="space-y-4">
+                    <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+                        <h3 class="text-base font-bold text-cyan-400 mb-2">¿Qué problema aborda?</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed font-light">
+                            Los entornos de trabajo y oficinas cerradas padecen del **Síndrome del Edificio Enfermo** por falta de ventilación, acumulando dióxido de carbono y Compuestos Orgánicos Volátiles (COVs) que disminuyen el rendimiento cognitivo de los empleados.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+                        <h3 class="text-base font-bold text-cyan-400 mb-2">La Solución Tecnológica</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed font-light">
+                            Un nodo de sensado electrónico ultra compacto que monitorea de forma autónoma el confort térmico y gases nocivos mediante dos sensores especializados, reportando de forma inalámbrica a la nube.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-slate-900/40 p-6 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-cyan-400 mb-3">Comportamiento esperado del sistema</h3>
+                        <ul class="space-y-3.5 text-sm text-slate-300">
+                            <li class="flex items-start gap-2.5">
+                                <span class="text-cyan-400 mt-1">✔</span>
+                                <span>Lecturas analógicas y conversión digital local mediante el bus común I2C.</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="text-cyan-400 mt-1">✔</span>
+                                <span>Medición de calidad del aire con el sensor Sensirion SGP30 (mide TVOC y eCO2 de forma robusta).</span>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="text-cyan-400 mt-1">✔</span>
+                                <span>Transmisión automática de reportes periódicos hacia un Dashboard en la nube usando el Wi-Fi integrado del MCU.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-800">
+                        <p class="text-xs text-slate-400"><strong>Modo de Operación:</strong> Autonomía por batería portátil de Li-Po con circuito integrado de recarga vía puerto USB-C.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: DIAGRAMA DE BLOQUES (ARQUITECTURA) -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">02.</span> Arquitectura de Bloques del Sistema
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Flujo de Señales</span>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto items-center">
+                <div class="lg:col-span-8 bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex justify-center">
+                    <!-- SVG Interactivo de Arquitectura -->
+                    <svg viewBox="0 0 600 300" class="w-full max-h-[260px]">
+                        <!-- Bloque Energía -->
+                        <g class="interactive-node" onclick="showBlockDetails('power')">
+                            <rect x="10" y="80" width="140" height="140" rx="10" fill="#152238" stroke="#00b4d8" stroke-width="2"/>
+                            <text x="80" y="120" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">GESTIÓN POTENCIA</text>
+                            <text x="80" y="150" fill="#00b4d8" font-size="11" text-anchor="middle">USB-C + TP4056</text>
+                            <text x="80" y="175" fill="#abc4ff" font-size="10" text-anchor="middle">Regulador LDO 3.3V</text>
+                        </g>
+
+                        <!-- Bus de Alimentación -->
+                        <line x1="150" y1="150" x2="225" y2="150" stroke="#00b4d8" stroke-width="3" stroke-dasharray="4"/>
+                        <polygon points="225,145 235,150 225,155" fill="#00b4d8"/>
+                        <text x="187" y="135" fill="#00b4d8" font-size="11" text-anchor="middle">3.3 V</text>
+
+                        <!-- Bloque MCU -->
+                        <g class="interactive-node" onclick="showBlockDetails('mcu')">
+                            <rect x="235" y="80" width="150" height="140" rx="10" fill="#152238" stroke="#00b4d8" stroke-width="2"/>
+                            <text x="310" y="120" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">SISTEMA CONTROL</text>
+                            <text x="310" y="150" fill="#00b4d8" font-size="14" font-weight="bold" text-anchor="middle">ESP32-C3</text>
+                            <text x="310" y="175" fill="#abc4ff" font-size="10" text-anchor="middle">MCU RISC-V + Wi-Fi</text>
+                        </g>
+
+                        <!-- Líneas de datos I2C -->
+                        <path d="M 385 130 L 440 130" stroke="#00b4d8" stroke-width="2" fill="none"/>
+                        <path d="M 385 170 L 440 170" stroke="#00b4d8" stroke-width="2" fill="none"/>
+                        <text x="412" y="115" fill="#abc4ff" font-size="9" text-anchor="middle">Bus I2C</text>
+
+                        <!-- Sensor TMP102 -->
+                        <g class="interactive-node" onclick="showBlockDetails('tmp102')">
+                            <rect x="445" y="50" width="145" height="85" rx="8" fill="#152238" stroke="#abc4ff" stroke-width="1"/>
+                            <text x="517" y="85" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">TMP102 Local</text>
+                            <text x="517" y="105" fill="#00b4d8" font-size="10" text-anchor="middle">Temp. Digital</text>
+                        </g>
+
+                        <!-- Sensor SGP30 -->
+                        <g class="interactive-node" onclick="showBlockDetails('sgp30')">
+                            <rect x="445" y="165" width="145" height="85" rx="8" fill="#152238" stroke="#abc4ff" stroke-width="1"/>
+                            <text x="517" y="200" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">SGP30 Externo</text>
+                            <text x="517" y="220" fill="#00b4d8" font-size="10" text-anchor="middle">Calidad Aire I2C</text>
+                        </g>
+                    </svg>
+                </div>
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <h3 class="text-sm font-bold text-white">Detalles del Bloque Seleccionado:</h3>
+                        <p id="block-desc-text" class="text-xs text-slate-300 mt-2 leading-relaxed font-light">
+                            Haz clic en cualquiera de los bloques interactivos del diagrama de la izquierda para conocer los detalles, voltajes de operación y direccionamientos lógicos del bus.
+                        </p>
+                    </div>
+                    <p class="text-xs text-slate-500 italic font-light">💡 Al utilizar un único bus compartido I2C, se optimiza el espacio de pistas de enrutamiento y puertos GPIO libres.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: ÁRBOL DE POTENCIA (POWER TREE) -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">03.</span> Distribución de Energía y Regulación
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Presupuesto Eléctrico</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto">
+                <div class="space-y-4">
+                    <p class="text-sm text-slate-300 leading-relaxed font-light">
+                        El sistema de potencia se ha dimensionado bajo un estricto margen de corriente máxima para evitar la inestabilidad por caídas de tensión bruscas:
+                    </p>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-center">
+                            <span class="text-xs text-slate-400 block mb-1">ESP32-C3</span>
+                            <strong class="text-base text-cyan-400">350 mA</strong>
+                            <span class="text-[9px] text-slate-500 block">Picos Tx Wi-Fi</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-center">
+                            <span class="text-xs text-slate-400 block mb-1">TMP102</span>
+                            <strong class="text-base text-cyan-400">10 µA</strong>
+                            <span class="text-[9px] text-slate-500 block">Dormido / Activo</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-center">
+                            <span class="text-xs text-slate-400 block mb-1">SGP30</span>
+                            <strong class="text-base text-cyan-400">48.2 mA</strong>
+                            <span class="text-[9px] text-slate-500 block">Resistencia MOX</span>
+                        </div>
+                    </div>
+                    <div class="p-3.5 bg-cyan-950/20 border border-cyan-900/50 rounded-lg text-xs text-cyan-300 leading-relaxed font-light">
+                        <strong>Justificación de Corriente Transitoria:</strong> Durante la inicialización del calentador del SGP30 y la activación de Wi-Fi del SoC, el consumo de corriente total alcanza un pico calculado de ~400 mA. Este valor es soportado sin problemas por la capacidad del regulador AMS1117 (1.0 A).
+                    </div>
+                </div>
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white mb-3">Estructura de Regulación Eléctrica</h3>
+                        <div class="space-y-3 text-xs">
+                            <div class="flex justify-between items-center bg-slate-900/80 p-2.5 rounded border border-slate-800">
+                                <span>Entrada USB Tipo C (VBUS)</span>
+                                <strong class="text-cyan-400">5.0 V</strong>
+                            </div>
+                            <div class="flex justify-between items-center bg-slate-900/80 p-2.5 rounded border border-slate-800">
+                                <span>Batería Recargable Li-Po</span>
+                                <strong class="text-cyan-400">3.7 V (Nominal)</strong>
+                            </div>
+                            <div class="flex justify-between items-center bg-slate-900/80 p-2.5 rounded border border-slate-800">
+                                <span>Riel de Electrónica Principal (LDO)</span>
+                                <strong class="text-cyan-400">3.3 V (AMS1117)</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-4 leading-relaxed font-light">
+                        * Conmutación automática de fuente (Power Path) implementada mediante diodos Schottky para evitar la descarga de la batería mientras se alimenta el equipo mediante el puerto USB-C.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: PRUEBA DE CONCEPTO -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">04.</span> Prueba de Concepto y Validación Lógica
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Coexistencia de Sensores</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto">
+                <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+                    <h3 class="text-base font-bold text-cyan-400 mb-3">Validación y Direccionamiento I2C</h3>
+                    <p class="text-sm text-slate-300 leading-relaxed mb-4 font-light">
+                        Para asegurar el correcto funcionamiento del bus compartido I2C sin colisiones de datos, se realizó el mapeo de registros por hardware de cada transductor:
+                    </p>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li class="flex justify-between border-b border-slate-800/60 pb-1">
+                            <span>Sensor de Temperatura (TMP102):</span>
+                            <span class="text-cyan-400 font-mono font-bold">0x48 (ADD0 -> GND)</span>
+                        </li>
+                        <li class="flex justify-between border-b border-slate-800/60 pb-1">
+                            <span>Sensor de Gas MOX (SGP30):</span>
+                            <span class="text-cyan-400 font-mono font-bold">0x58 (Dirección Única Fija)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-cyan-400 mb-3">Ventajas de la Elección de Componentes</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed mb-4 font-light">
+                            La combinación del ESP32-C3 y el sensor SGP30 ofrece una optimización clave del consumo energético, ya que el transductor se comunica de manera puramente digital, reduciendo la necesidad de convertidores analógico-digitales (ADC) encendidos permanentemente.
+                        </p>
+                    </div>
+                    <div class="text-[11px] text-slate-500 italic mt-3">
+                        * Referencias tomadas de las notas de aplicación oficiales de Sensirion y Texas Instruments.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: ESQUEMÁTICO POTENCIA -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">05.</span> Esquemático: Entrada y Gestión de Potencia
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Altium Designer</span>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto items-center">
+                <div class="lg:col-span-6 space-y-4 text-sm text-slate-300">
+                    <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-2">Protección de la Entrada USB-C</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Se colocó un fusible térmico reseteable (PPTC) para impedir fallas catastróficas por sobrecorriente externa y un diodo TVS encargado de filtrar ruidos transitorios ESD producidos en la conexión física.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-2">Power Path con Diodos Schottky</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Un arreglo de diodos permite que el dispositivo elija automáticamente el USB como fuente principal de energía al ser enchufado, conmutando suavemente a la batería portátil Li-Po cuando se desconecta.
+                        </p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 bg-slate-900/60 p-3 rounded-xl border border-slate-800 h-[280px] flex justify-center items-center overflow-hidden">
+                    <img src="Esquematicopower.PNG" alt="Esquemático Potencia" class="zoomable-image max-w-full max-h-full object-contain rounded">
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: ESQUEMÁTICO MCU -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">06.</span> Esquemático: MCU y Buses de Sensores
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Altium Designer</span>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto items-center">
+                <div class="lg:col-span-6 bg-slate-900/60 p-3 rounded-xl border border-slate-800 h-[280px] flex justify-center items-center overflow-hidden">
+                    <img src="EsquematicoMCU.PNG" alt="Esquemático MCU" class="zoomable-image max-w-full max-h-full object-contain rounded">
+                </div>
+                <div class="lg:col-span-6 space-y-4 text-sm text-slate-300">
+                    <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-2">Separación de Rieles de Ruido (3V3_MCU)</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Se utilizó una perla de ferrita para aislar y blindar la alimentación de alta frecuencia del microcontrolador. Esto evita que el ruido electromagnético parásito del transceptor de radio Wi-Fi altere el cálculo de las lecturas digitales.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-2">Conectividad del SGP30</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            El SGP30 se alimenta de la línea de 3.3 V general regulada y se conecta a través del bus común en paralelo compartiendo las resistencias pull-up de 4.7kΩ del SCL y SDA.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: ESTRUCTURA DE FIRMWARE -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">07.</span> Estructura y Código del Firmware
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">ESP-IDF / Espressif C++</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto">
+                <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+                    <h3 class="text-base font-bold text-cyan-400 mb-3">Lógica del Sistema Embebido</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-3 font-light">
+                        El código principal fue estructurado utilizando las librerías oficiales del ecosistema **Espressif**. Se encarga de coordinar las siguientes etapas críticas:
+                    </p>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li>• <strong>WiFi STA Mode:</strong> Inicializa el stack TCP/IP y gestiona eventos de re-conexión automática ante fallas de enlace inalámbrico.</li>
+                        <li>• <strong>I2C Driver Config:</strong> Configura pines GPIO4 (SDA) y GPIO5 (SCL) a una velocidad estándar de 100 kHz.</li>
+                        <li>• <strong>Lectura SGP30:</strong> Realiza rutinas periódicas leyendo registros de calidad de aire y enviando comandos de autocalibración interna.</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-cyan-400 mb-3">Estructura del Bucle Principal</h3>
+                        <div class="bg-slate-950 p-4 rounded-lg border border-slate-800/80 font-mono text-[10px] text-emerald-400 overflow-x-auto space-y-1">
+                            <p>// Lectura de Variables y Envío IoT</p>
+                            <p>sgp30_measure_iaq(&amp;sgp30_dev, &amp;tvoc, &amp;eco2);</p>
+                            <p>tmp102_read_temp_c(&amp;temp_c);</p>
+                            <p>if (wifi_is_connected()) {</p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;iot_client_publish_data(temp_c, tvoc, eco2);</p>
+                            <p>}</p>
+                            <p>esp_deep_sleep(10 * 1000000); // 10s Low-power sleep</p>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-slate-500 mt-2">
+                        * Código optimizado para maximizar la autonomía desconectando los periféricos en el retardo de bajo consumo.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 9: DISEÑO PCB -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">08.</span> Layout de la PCB y Enrutamiento
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Dimensiones y Reglas de Diseño</span>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto items-center">
+                <div class="lg:col-span-6 space-y-4 text-sm text-slate-300">
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-1.5 text-xs">Especificaciones del Tamaño Físico</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Para asegurar un factor de forma ultra-compacto y transportable, las dimensiones finales de la placa de doble capa se definieron en **2410 mils de ancho por 1400 mils de alto** (aproximadamente 61.2 mm x 35.6 mm).
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-1.5 text-xs">Reglas de Ancho de Pista</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Las pistas de la batería y la carga principal se ruteraron a **30 mils** para minimizar impedancias. Las pistas de potencia de alimentación de la MCU se trazaron a **15 mils** para tolerar de manera segura transitorios de hasta 500 mA del Wi-Fi. Las pistas normales de señal (como datos I2C) se rutearon a un ancho estándar de **10 mils**.
+                        </p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 bg-slate-900/60 p-3 rounded-xl border border-slate-800 h-[280px] flex justify-center items-center overflow-hidden">
+                    <img src="Footprint_PCB.PNG" alt="Diseño PCB Layout" class="zoomable-image max-w-full max-h-full object-contain rounded">
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 10: RENDER 3D -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">09.</span> Render 3D de la PCB Final
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Alineación Mecánica</span>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-auto items-center">
+                <div class="lg:col-span-6 bg-slate-900/60 p-3 rounded-xl border border-slate-800 h-[280px] flex justify-center items-center overflow-hidden">
+                    <img src="Render3D_PCB.png" alt="Render 3D" class="zoomable-image max-w-full max-h-full object-contain rounded">
+                </div>
+                <div class="lg:col-span-6 space-y-4 text-sm text-slate-300">
+                    <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-2">Estructura Ergonómica y de Conexión</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            El conector de carga USB-C, el puerto JST de la batería Li-Po y el Header externo para acoplar el sensor de calidad del aire SGP30 se colocaron cerca de los bordes para facilitar su ensamblado e integración mecánica.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800">
+                        <h3 class="font-bold text-white mb-2">Despeje de Radiofrecuencia</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            El extremo donde se ubica la antena de PCB integrada del ESP32-C3 cuenta con un espacio libre de planos de cobre masivos o componentes metálicos altos, garantizando un alcance óptimo para la transmisión Wi-Fi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 11: CONCLUSIONES Y TRABAJO FUTURO -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">10.</span> Cierre y Conclusiones del Proyecto
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Lecciones de Ingeniería</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto">
+                <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800">
+                    <h3 class="text-base font-bold text-cyan-400 mb-2">Logros Principales</h3>
+                    <ul class="space-y-2 text-xs text-slate-300">
+                        <li class="flex items-center gap-2">
+                            <span class="text-cyan-400">•</span> Se logró la convivencia perfecta en paralelo del bus I2C para el TMP102 (0x48) y el SGP30 (0x58).
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-cyan-400">•</span> El selector automático de energía con diodos Schottky protege térmicamente la vida útil de la celda de Li-Po.
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-cyan-400">•</span> El enrutamiento de 15 mils y 30 mils de potencia asegura la integridad de voltaje de la placa.
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-slate-900/40 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-base font-bold text-cyan-400 mb-2">Evolución Futura (Versión 2)</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Para maximizar la autonomía de la batería a niveles industriales, planeo incorporar un transistor **MOSFET de canal P** como interruptor de potencia. De esta forma, se podrá desactivar de manera absoluta la alimentación del sensor de calidad del aire SGP30 durante los ciclos prolongados de sueño profundo (*Deep Sleep*) del ESP32-C3.
+                        </p>
+                    </div>
+                    <div class="text-[11px] text-slate-500 mt-2 italic border-t border-slate-800 pt-2">
+                        * Lección aprendida: las dimensiones del plano de enrutamiento y el espesor de las pistas de potencia son factores cruciales para la inmunidad al ruido.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 12: REFERENCIAS -->
+        <div class="slide justify-between">
+            <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                    <span class="text-cyan-400">11.</span> Referencias Bibliográficas y Datasheets
+                </h2>
+                <span class="text-xs text-slate-500 uppercase tracking-widest">Fuentes Técnicas</span>
+            </div>
+            <div class="my-auto space-y-3">
+                <div class="bg-slate-900/40 p-4.5 rounded-xl border border-slate-800 text-[11px] md:text-xs text-slate-300 space-y-2">
+                    <p class="flex items-start gap-3">
+                        <span class="bg-slate-800 px-2 py-0.5 rounded text-cyan-400 font-mono text-[10px]">DS01</span>
+                        <span><strong>Espressif Systems (2026):</strong> <i>ESP32-C3-WROOM-02 Hardware Datasheet v1.7.</i> Directrices de pines de arranque, ruidos de acoplamiento de RF e inicialización del stack Wi-Fi.</span>
+                    </p>
+                    <p class="flex items-start gap-3">
+                        <span class="bg-slate-800 px-2 py-0.5 rounded text-cyan-400 font-mono text-[10px]">DS02</span>
+                        <span><strong>Sensirion AG (2020):</strong> <i>Sensirion Gas Sensors SGP30 Datasheet.</i> Registro de comandos para cálculo de TVOC y eCO2, inicialización I2C y especificaciones térmicas.</span>
+                    </p>
+                    <p class="flex items-start gap-3">
+                        <span class="bg-slate-800 px-2 py-0.5 rounded text-cyan-400 font-mono text-[10px]">DS03</span>
+                        <span><strong>Texas Instruments (2015):</strong> <i>TMP102 Digital Temperature Sensor with SMBus and I2C Interface Datasheet.</i></span>
+                    </p>
+                    <p class="flex items-start gap-3">
+                        <span class="bg-slate-800 px-2 py-0.5 rounded text-cyan-400 font-mono text-[10px]">PCB01</span>
+                        <span><strong>JLCPCB (2026):</strong> <i>Capabilities &amp; Design Rules Reference.</i> Límites de fabricación para tarjetas estándar FR4 (ancho mínimo de pista/aislamiento de 5 mils, agujeros mínimos de vía de 0.3 mm, cobre exterior de 1 oz).</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra de Progreso Inferior -->
+        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden no-print">
+            <div id="progress-bar" class="bg-cyan-400 h-full w-0 transition-all duration-300"></div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal para zoom de imágenes de Altium -->
+    <div id="lightbox" class="lightbox-modal no-print" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="Esquemático Ampliado">
+    </div>
+
+    <!-- Controles de Navegación del Slide Deck -->
+    <div class="mt-8 flex items-center gap-6 no-print">
+        <button onclick="navigate(-1)" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-6 rounded-lg border border-slate-700 hover:border-slate-600 transition-all">
+            ◀ Anterior
+        </button>
+        <span class="text-sm text-slate-400 font-mono" id="slide-indicator">Slide 1 / 12</span>
+        <button onclick="navigate(1)" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 px-6 rounded-lg border border-slate-700 hover:border-slate-600 transition-all">
+            Siguiente ▶
+        </button>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress-bar');
+        const slideIndicator = document.getElementById('slide-indicator');
+
+        // Textos descriptivos para los bloques interactivos de la diapositiva 3
+        const blockDetails = {
+            power: "<strong>Etapa de Alimentación:</strong> Recibe 5 V por puerto USB-C (protegido por fusible PPTC e integrado TVS) o 3.7 V de la batería Li-Po. El integrado TP4056 gestiona la carga de forma aislada y un regulador LDO AMS1117 provee un riel de 3.3 V super estable de hasta 1 A de capacidad.",
+            mcu: "<strong>Módulo de Control (ESP32-C3):</strong> Un SoC basado en arquitectura RISC-V de 32 bits de un solo núcleo. Incluye transceptor de radio de 2.4 GHz para Wi-Fi nativo, líneas dedicadas GPIO4 (SDA) y GPIO5 (SCL), y puente de depuración USB-CDC integrado directamente.",
+            tmp102: "<strong>Termómetro TMP102:</strong> Integrado digital de ultra bajo consumo (10 µA) con resolución de 12 bits de precisión. Comunica el estado térmico del ambiente compartiendo bus I2C con una dirección fija configurada por hardware en 0x48.",
+            sgp30: "<strong>Sensor de Calidad de Aire SGP30:</strong> Transductor MOX avanzado que mide CO2 equivalente (eCO2) y compuestos volátiles (TVOC). Se comunica mediante el bus común I2C en la dirección hexadecimal fija de 0x58 alimentado por el riel general de 3.3 V."
+        };
+
+        function showBlockDetails(key) {
+            const descBox = document.getElementById('block-desc-text');
+            if (blockDetails[key]) {
+                descBox.innerHTML = blockDetails[key];
+            }
+        }
+
+        function updateSlideUI() {
+            slides.forEach((slide, index) => {
+                if (index === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Actualizar indicador de páginas
+            slideIndicator.textContent = `Slide ${currentSlideIndex + 1} / ${slides.length}`;
+
+            // Calcular barra de progreso
+            const progressPct = (currentSlideIndex / (slides.length - 1)) * 100;
+            progressBar.style.width = `${progressPct}%`;
+        }
+
+        function navigate(dir) {
+            currentSlideIndex += dir;
+            if (currentSlideIndex < 0) currentSlideIndex = 0;
+            if (currentSlideIndex >= slides.length) currentSlideIndex = slides.length - 1;
+            updateSlideUI();
+        }
+
+        function openLightbox(src) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+        }
+
+        // Registrar los escuchadores de eventos para cada imagen técnica del proyecto
+        document.querySelectorAll('.zoomable-image').forEach(img => {
+            img.addEventListener('click', (e) => {
+                openLightbox(e.target.src);
+            });
+        });
+
+        // Permitir cerrar el zoom presionando la tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                navigate(1);
+            } else if (e.key === 'ArrowLeft') {
+                navigate(-1);
+            }
+        });
+
+        // Inicializar UI
+        updateSlideUI();
+    </script>
+</body>
+</html>
